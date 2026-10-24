@@ -1,4 +1,4 @@
-# web-mcp
+# bias-mcp
 
 One MCP server for web search and web fetch on top of **Exa**, **Firecrawl** and **context.dev**. Every fetched page also gets a **bias score**.
 
@@ -81,7 +81,7 @@ Set one provider key. With more than one, the first in the order Firecrawl, cont
   "mcpServers": {
     "web": {
       "command": "node",
-      "args": ["/path/to/web-mcp/dist/index.js"],
+      "args": ["/path/to/bias-mcp/dist/index.js"],
       "env": {
         "EXA_API_KEY": "…",
         "FIRECRAWL_API_KEY": "…",
