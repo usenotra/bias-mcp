@@ -51,9 +51,10 @@ Set at least one provider key. `ANTHROPIC_API_KEY` is needed for bias scoring. S
 |---|---|
 | `EXA_API_KEY` | Enables Exa |
 | `FIRECRAWL_API_KEY` | Enables Firecrawl |
-| `CONTEXT_DEV_API_KEY` | Enables context.dev |
-| `ANTHROPIC_API_KEY` | Bias scoring |
-| `BIAS_MODEL` | Model override (default `claude-haiku-5-5`) |
+| `CONTEXT_DEV_API_KEY` or `CONTEXT_API_KEY` | Enables context.dev |
+| `ANTHROPIC_API_KEY` | Bias scoring through the Anthropic API |
+| `BIAS_BACKEND` | `anthropic` or `claude-cli`. Without it, the server uses the API when a key is set and otherwise the `claude` CLI if it is installed, which runs on your Claude Code login |
+| `BIAS_MODEL` | Model override (default `claude-haiku-5-5` for the API, `haiku` for the CLI) |
 | `BIAS_MAX_CHARS` | Most page characters sent to the bias model (default 120000). Longer pages are cut and marked `truncated: true` |
 
 ### Claude Code / Claude Desktop / Cursor
@@ -113,7 +114,9 @@ npm run eval -- --filter political    # only cases whose id contains "political"
 npm run eval -- --threshold 0.9       # exit 1 when fewer than 90% of runs pass
 ```
 
-Results are written to `evals/results/<timestamp>.json`.
+Results are written to `evals/results/<timestamp>.json`. `npm run eval` reads `.env` when it exists.
+
+The last run on Claude Haiku 5.5 through the `claude` CLI passed 42 of 42 runs (14 cases, three runs each).
 
 ## Layout
 

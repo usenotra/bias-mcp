@@ -23,7 +23,7 @@ export function registerWebFetch(server: McpServer, router: ProviderRouter, scor
       let biasResult: Bias | { error: string } | undefined;
       if (bias) {
         if (!scorer) {
-          biasResult = { error: "Bias scoring needs ANTHROPIC_API_KEY. Set bias=false to silence this." };
+          biasResult = { error: "Bias scoring needs ANTHROPIC_API_KEY or the claude CLI. Set bias=false to silence this." };
         } else {
           const evidence = research ? await researchPublisher(router, hostnameOf(page.url)) : [];
           biasResult = await scorer.scorePage(page, evidence, intent);

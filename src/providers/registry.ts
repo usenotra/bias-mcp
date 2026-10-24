@@ -14,7 +14,7 @@ const FACTORIES: Record<ProviderId, (apiKey: string) => Provider> = {
 export function loadProviders(env: NodeJS.ProcessEnv = process.env): Map<ProviderId, Provider> {
   const providers = new Map<ProviderId, Provider>();
   for (const id of PROVIDER_IDS) {
-    const key = env[PROVIDER_ENV_KEYS[id]];
+    const key = PROVIDER_ENV_KEYS[id].map((name) => env[name]).find(Boolean);
     if (key) providers.set(id, FACTORIES[id](key));
   }
   return providers;

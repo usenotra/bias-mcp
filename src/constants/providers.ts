@@ -2,11 +2,11 @@ export const PROVIDER_IDS = ["exa", "firecrawl", "context"] as const;
 
 export type ProviderId = (typeof PROVIDER_IDS)[number];
 
-/** Env var holding each provider's API key. A provider is enabled iff its key is set. */
-export const PROVIDER_ENV_KEYS: Record<ProviderId, string> = {
-  exa: "EXA_API_KEY",
-  firecrawl: "FIRECRAWL_API_KEY",
-  context: "CONTEXT_DEV_API_KEY",
+/** Env vars holding each provider's API key, first match wins. A provider is enabled iff one is set. */
+export const PROVIDER_ENV_KEYS: Record<ProviderId, string[]> = {
+  exa: ["EXA_API_KEY"],
+  firecrawl: ["FIRECRAWL_API_KEY"],
+  context: ["CONTEXT_DEV_API_KEY", "CONTEXT_API_KEY"],
 };
 
 export const PROVIDER_BASE_URLS: Record<ProviderId, string> = {

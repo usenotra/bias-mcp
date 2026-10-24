@@ -23,7 +23,7 @@ export function registerWebSearch(server: McpServer, router: ProviderRouter, sco
       let biasError: string | undefined;
       let biases: Awaited<ReturnType<BiasScorer["scoreSearchResults"]>> = [];
       if (bias) {
-        if (!scorer) biasError = "Bias scoring needs ANTHROPIC_API_KEY.";
+        if (!scorer) biasError = "Bias scoring needs ANTHROPIC_API_KEY or the claude CLI.";
         else biases = await scorer.scoreSearchResults(query, results).catch((err) => {
           biasError = errorMessage(err);
           return [];

@@ -42,6 +42,5 @@ export interface SearchResultBias {
 }
 
 export interface BiasConfig {
-  model: string;
   maxChars: number;
 }

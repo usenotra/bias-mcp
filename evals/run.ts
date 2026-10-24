@@ -1,7 +1,8 @@
 import { mkdir, writeFile } from "node:fs/promises";
 import { parseArgs } from "node:util";
 import { BiasScorer } from "../src/bias/scorer.js";
-import { DEFAULT_BIAS_MAX_CHARS, DEFAULT_BIAS_MODEL } from "../src/constants/bias.js";
+import { createBiasLlm } from "../src/bias/llm-factory.js";
+import { DEFAULT_BIAS_MAX_CHARS } from "../src/constants/bias.js";
 import { POLITICAL_CASES } from "./cases/political.js";
 import { SAAS_CASES } from "./cases/saas.js";
 import type { EvalCase, EvalRun } from "./types/eval.js";
@@ -16,8 +17,9 @@ const { values } = parseArgs({
   },
 });
 
-if (!process.env.ANTHROPIC_API_KEY && !process.env.ANTHROPIC_AUTH_TOKEN) {
-  console.error("Set ANTHROPIC_API_KEY to run the bias evals.");
+const llm = createBiasLlm();
+if (!llm) {
+  console.error("Set ANTHROPIC_API_KEY or install the claude CLI to run the bias evals.");
   process.exit(1);
 }
 
@@ -25,10 +27,7 @@ const runs = Number(values.runs);
 const concurrency = Number(values.concurrency);
 const threshold = Number(values.threshold);
 const cases = [...SAAS_CASES, ...POLITICAL_CASES].filter((c) => !values.filter || c.id.includes(values.filter));
-const scorer = new BiasScorer({
-  model: process.env.BIAS_MODEL ?? DEFAULT_BIAS_MODEL,
-  maxChars: Number(process.env.BIAS_MAX_CHARS) || DEFAULT_BIAS_MAX_CHARS,
-});
+const scorer = new BiasScorer(llm, { maxChars: Number(process.env.BIAS_MAX_CHARS) || DEFAULT_BIAS_MAX_CHARS });
 
 const jobs: { testCase: EvalCase; run: number }[] = cases.flatMap((testCase) =>
   Array.from({ length: runs }, (_, run) => ({ testCase, run: run + 1 })),
@@ -74,11 +73,11 @@ const byCategory = categories.map((category) => {
   return `${category} ${rs.filter((r) => r.pass).length}/${rs.length}`;
 });
 
-console.log(`\n${passed}/${results.length} passed (${(rate * 100).toFixed(0)}%)  ·  ${byCategory.join("  ·  ")}  ·  model ${scorer.model}`);
+console.log(`\n${passed}/${results.length} passed (${(rate * 100).toFixed(0)}%)  ·  ${byCategory.join("  ·  ")}  ·  model ${scorer.model} via ${scorer.backend}`);
 
 await mkdir("evals/results", { recursive: true });
 const file = `evals/results/${new Date().toISOString().replace(/[:.]/g, "-")}.json`;
-await writeFile(file, JSON.stringify({ model: scorer.model, runs, rate, results }, null, 2));
+await writeFile(file, JSON.stringify({ model: scorer.model, backend: scorer.backend, runs, rate, results }, null, 2));
 console.log(`Saved ${file}`);
 
 process.exit(rate >= threshold ? 0 : 1);
