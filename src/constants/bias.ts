@@ -1,5 +1,3 @@
-export const DEFAULT_BIAS_MODEL = "claude-haiku-5-5";
-
 /** Max page characters sent to the bias model; longer pages are cut and flagged `truncated`. */
 export const DEFAULT_BIAS_MAX_CHARS = 120_000;
 
@@ -58,9 +56,22 @@ export const SEARCH_BIAS_SYSTEM_PROMPT = `You screen web search results for like
 
 For each result give a score from 0 (neutral, independent) to 1 (publisher has a direct stake in what it recommends, e.g. a vendor's "best tools" list that ranks itself first, or a party-funded outlet covering its opponents). Set applicable=false and score null for documentation, reference pages and other results where bias is not meaningful. Keep reasons to one sentence and base them only on what is visible (domain vs. products mentioned, framing). This is a cheap pre-screen; uncertain cases should be scored moderately and say so.`;
 
-export const BIAS_BACKENDS = ["anthropic", "claude-cli"] as const;
+export const BIAS_BACKENDS = ["neon", "openrouter", "vercel", "anthropic", "claude-cli"] as const;
 
-export const DEFAULT_CLAUDE_CLI_MODEL = "haiku";
+export const BACKEND_DEFAULT_MODELS = {
+  neon: "claude-haiku-5-5",
+  openrouter: "anthropic/claude-haiku-5.5",
+  vercel: "anthropic/claude-haiku-5.5",
+  anthropic: "claude-haiku-5-5",
+  "claude-cli": "haiku",
+} as const;
+
+export const BACKEND_ENV_KEYS = {
+  neon: ["NEON_AI_GATEWAY_BASE_URL", "NEON_AI_GATEWAY_TOKEN"],
+  openrouter: ["OPENROUTER_API_KEY"],
+  vercel: ["AI_GATEWAY_API_KEY"],
+  anthropic: ["ANTHROPIC_API_KEY"],
+} as const;
 
 export const CLAUDE_CLI_TIMEOUT_MS = 180_000;
 

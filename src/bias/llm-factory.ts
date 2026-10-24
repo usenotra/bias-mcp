@@ -1,25 +1,28 @@
 import { spawnSync } from "node:child_process";
-import { DEFAULT_BIAS_MODEL, DEFAULT_CLAUDE_CLI_MODEL } from "../constants/bias.js";
-import type { BiasBackend, StructuredLlm } from "../types/llm.js";
-import { createAnthropicLlm } from "./anthropic-llm.js";
+import { BACKEND_DEFAULT_MODELS, BACKEND_ENV_KEYS, BIAS_BACKENDS } from "../constants/bias.js";
+import type { AiSdkBackend, BiasBackend, StructuredLlm } from "../types/llm.js";
+import { createAiSdkLlm } from "./ai-sdk-llm.js";
 import { createClaudeCliLlm } from "./claude-cli-llm.js";
 
 function hasClaudeCli(): boolean {
-  const result = spawnSync(process.env.CLAUDE_CLI_PATH ?? "claude", ["--version"], { stdio: "ignore" });
-  return result.status === 0;
+  return spawnSync(process.env.CLAUDE_CLI_PATH ?? "claude", ["--version"], { stdio: "ignore" }).status === 0;
 }
 
-function pickBackend(env: NodeJS.ProcessEnv): BiasBackend | null {
-  const requested = env.BIAS_BACKEND;
-  if (requested === "anthropic" || requested === "claude-cli") return requested;
-  if (env.ANTHROPIC_API_KEY || env.ANTHROPIC_AUTH_TOKEN) return "anthropic";
-  if (hasClaudeCli()) return "claude-cli";
-  return null;
+function isConfigured(backend: BiasBackend, env: NodeJS.ProcessEnv): boolean {
+  if (backend === "claude-cli") return hasClaudeCli();
+  return BACKEND_ENV_KEYS[backend].every((name) => Boolean(env[name]));
+}
+
+export function pickBackend(env: NodeJS.ProcessEnv = process.env): BiasBackend | null {
+  const requested = env.BIAS_BACKEND as BiasBackend | undefined;
+  if (requested && BIAS_BACKENDS.includes(requested)) return requested;
+  return BIAS_BACKENDS.find((backend) => isConfigured(backend, env)) ?? null;
 }
 
 export function createBiasLlm(env: NodeJS.ProcessEnv = process.env): StructuredLlm | null {
   const backend = pickBackend(env);
-  if (backend === "anthropic") return createAnthropicLlm(env.BIAS_MODEL ?? DEFAULT_BIAS_MODEL);
-  if (backend === "claude-cli") return createClaudeCliLlm(env.BIAS_MODEL ?? DEFAULT_CLAUDE_CLI_MODEL);
-  return null;
+  if (!backend) return null;
+  const model = env.BIAS_MODEL ?? BACKEND_DEFAULT_MODELS[backend];
+  if (backend === "claude-cli") return createClaudeCliLlm(model);
+  return createAiSdkLlm(backend as AiSdkBackend, model, env);
 }

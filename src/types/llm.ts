@@ -3,6 +3,8 @@ import type { BIAS_BACKENDS } from "../constants/bias.js";
 
 export type BiasBackend = (typeof BIAS_BACKENDS)[number];
 
+export type AiSdkBackend = Exclude<BiasBackend, "claude-cli">;
+
 export interface StructuredRequest<T extends z.ZodType> {
   system: string;
   prompt: string;

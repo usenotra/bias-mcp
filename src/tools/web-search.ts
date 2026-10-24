@@ -23,7 +23,7 @@ export function registerWebSearch(server: McpServer, router: ProviderRouter, sco
       let biasError: string | undefined;
       let biases: Awaited<ReturnType<BiasScorer["scoreSearchResults"]>> = [];
       if (bias) {
-        if (!scorer) biasError = "Bias scoring needs ANTHROPIC_API_KEY or the claude CLI.";
+        if (!scorer) biasError = "Bias scoring needs a model key: NEON_AI_GATEWAY_BASE_URL and NEON_AI_GATEWAY_TOKEN, OPENROUTER_API_KEY, AI_GATEWAY_API_KEY or ANTHROPIC_API_KEY.";
         else biases = await scorer.scoreSearchResults(query, results).catch((err) => {
           biasError = errorMessage(err);
           return [];

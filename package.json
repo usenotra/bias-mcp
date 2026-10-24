@@ -14,8 +14,12 @@
   "license": "MIT",
   "type": "module",
   "dependencies": {
-    "@anthropic-ai/sdk": "^1.3.0",
+    "@ai-sdk/anthropic": "^4.0.88",
+    "@ai-sdk/gateway": "^4.0.126",
     "@modelcontextprotocol/sdk": "^1.32.2",
+    "@neon/ai-sdk-provider": "^1.1.0",
+    "@openrouter/ai-sdk-provider": "^3.1.0",
+    "ai": "^7.0.153",
     "zod": "^4.6.7"
   },
   "devDependencies": {

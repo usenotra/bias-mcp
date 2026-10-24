@@ -20,7 +20,7 @@ const { values } = parseArgs({
 
 const llm = createBiasLlm();
 if (!llm) {
-  console.error("Set ANTHROPIC_API_KEY or install the claude CLI to run the bias evals.");
+  console.error("Set NEON_AI_GATEWAY_BASE_URL and NEON_AI_GATEWAY_TOKEN, OPENROUTER_API_KEY, AI_GATEWAY_API_KEY or ANTHROPIC_API_KEY to run the bias evals.");
   process.exit(1);
 }
 
@@ -28,7 +28,7 @@ const runs = Number(values.runs);
 const concurrency = Number(values.concurrency);
 const threshold = Number(values.threshold);
 const cases = [...SAAS_CASES, ...POLITICAL_CASES, ...SATELLITE_CASES].filter((c) => !values.filter || c.id.includes(values.filter));
-const scorer = new BiasScorer(llm, { maxChars: Number(process.env.BIAS_MAX_CHARS) || DEFAULT_BIAS_MAX_CHARS });
+const scorer = new BiasScorer(llm!, { maxChars: Number(process.env.BIAS_MAX_CHARS) || DEFAULT_BIAS_MAX_CHARS });
 
 const jobs: { testCase: EvalCase; run: number }[] = cases.flatMap((testCase) =>
   Array.from({ length: runs }, (_, run) => ({ testCase, run: run + 1 })),

@@ -31,7 +31,7 @@ Some pages have a stake in what they recommend. Say you search for *"best paymen
 How it works:
 
 1. **Publisher research** (`research: true`, the default). One extra search looks up the domain's owner, parent company, funding and political affiliation. Results are cached per domain for the life of the process.
-2. **Scoring.** A cheap model (Claude Haiku 5.5, about $0.10 per 1M input tokens) reads the page, the reader's `intent` if given, and the research results. It returns structured JSON.
+2. **Scoring.** A cheap model (Claude Haiku 5.5 by default, about $0.10 per 1M input tokens, called through the [AI SDK](https://ai-sdk.dev)) reads the page, the reader's `intent` if given, and the research results. It returns structured JSON.
 3. **Grounding.** `sources` may only cite the page itself or a research result. Any other URL the model cites is dropped.
 4. **Not applicable.** For docs, reference pages, specs and changelogs, `applicable` is `false` and `score` is `null`. Bias isn't a meaningful question for those pages.
 
@@ -62,16 +62,27 @@ The verdict is cached per domain, so every page on the site gets the same answer
 npm install && npm run build
 ```
 
-Set one provider key. With more than one, the first in the order Firecrawl, context.dev, Exa does the work and the others are fallbacks. `ANTHROPIC_API_KEY` is needed for bias scoring. See `.env.example`.
+Set one provider key. With more than one, the first in the order Firecrawl, context.dev, Exa does the work and the others are fallbacks. Bias scoring needs one model gateway. The server checks for these in order and uses the first one that is fully set:
+
+1. **Neon AI Gateway:** `NEON_AI_GATEWAY_BASE_URL` and `NEON_AI_GATEWAY_TOKEN`. Both are required, and `neon env pull` writes them for you.
+2. **OpenRouter:** `OPENROUTER_API_KEY`.
+3. **Vercel AI Gateway:** `AI_GATEWAY_API_KEY`.
+4. **Anthropic API:** `ANTHROPIC_API_KEY`.
+5. **The `claude` CLI**, if it is installed, which runs on your Claude Code login.
+
+See `.env.example`.
 
 | Env var | Purpose |
 |---|---|
 | `EXA_API_KEY` | Enables Exa |
 | `FIRECRAWL_API_KEY` | Enables Firecrawl |
 | `CONTEXT_DEV_API_KEY` or `CONTEXT_API_KEY` | Enables context.dev |
+| `NEON_AI_GATEWAY_BASE_URL` + `NEON_AI_GATEWAY_TOKEN` | Bias scoring through the Neon AI Gateway (first choice) |
+| `OPENROUTER_API_KEY` | Bias scoring through OpenRouter |
+| `AI_GATEWAY_API_KEY` | Bias scoring through the Vercel AI Gateway |
 | `ANTHROPIC_API_KEY` | Bias scoring through the Anthropic API |
-| `BIAS_BACKEND` | `anthropic` or `claude-cli`. Without it, the server uses the API when a key is set and otherwise the `claude` CLI if it is installed, which runs on your Claude Code login |
-| `BIAS_MODEL` | Model override (default `claude-haiku-5-5` for the API, `haiku` for the CLI) |
+| `BIAS_BACKEND` | Force one of `neon`, `openrouter`, `vercel`, `anthropic` or `claude-cli` |
+| `BIAS_MODEL` | Model override. Defaults to Claude Haiku 5.5 in each gateway's naming: `claude-haiku-5-5` on Neon and Anthropic, `anthropic/claude-haiku-5.5` on OpenRouter and Vercel |
 | `BIAS_MAX_CHARS` | Most page characters sent to the bias model (default 120000). Longer pages are cut and marked `truncated: true` |
 
 ### Claude Code / Claude Desktop / Cursor
@@ -86,7 +97,8 @@ Set one provider key. With more than one, the first in the order Firecrawl, cont
         "EXA_API_KEY": "…",
         "FIRECRAWL_API_KEY": "…",
         "CONTEXT_DEV_API_KEY": "…",
-        "ANTHROPIC_API_KEY": "…"
+        "NEON_AI_GATEWAY_BASE_URL": "…",
+        "NEON_AI_GATEWAY_TOKEN": "…"
       }
     }
   }
@@ -117,7 +129,7 @@ Set one provider key. With more than one, the first in the order Firecrawl, cont
 ## Evals
 
 ```bash
-npm run eval    # bias evals against the real model, needs ANTHROPIC_API_KEY
+npm run eval    # bias evals against the real model, needs a model gateway from the list above
 ```
 
 The evals in `evals/cases` are fictional pages with an expected outcome. Every company, outlet, party and person in them is made up. The SaaS set covers a vendor ranking itself first, an affiliate listicle, a sponsored article, a competitor hit piece, a vendor comparison that is honest about the competitor, an independent benchmark, API docs and a changelog. The satellite set covers two pages from an article-only site that favors one company (one of them never mentions it) and three look-alikes that must not be flagged: a review site with a named owner, a vendor's own blog and a personal engineering blog. The political set covers a party-funded outlet, an industry-funded think tank, a union-funded voter guide, a labeled opinion column, a nonpartisan wire report and a statistics release.

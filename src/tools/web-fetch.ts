@@ -24,7 +24,7 @@ export function registerWebFetch(server: McpServer, router: ProviderRouter, scor
       let biasResult: Bias | { error: string } | undefined;
       if (bias) {
         if (!scorer) {
-          biasResult = { error: "Bias scoring needs ANTHROPIC_API_KEY or the claude CLI. Set bias=false to silence this." };
+          biasResult = { error: "Bias scoring needs a model key: NEON_AI_GATEWAY_BASE_URL and NEON_AI_GATEWAY_TOKEN, OPENROUTER_API_KEY, AI_GATEWAY_API_KEY or ANTHROPIC_API_KEY. Set bias=false to silence this." };
         } else {
           const [evidence, site] = research
             ? await Promise.all([researchPublisher(router, hostnameOf(page.url)), profileSite(router, page)])

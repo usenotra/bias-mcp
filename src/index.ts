@@ -30,5 +30,5 @@ registerWebFetch(server, router, scorer);
 
 await server.connect(new StdioServerTransport());
 console.error(
-  `bias-mcp ready · provider: ${router.primary}${router.available.length > 1 ? ` (fallback: ${router.available.slice(1).join(", ")})` : ""} · bias: ${scorer ? `${scorer.model} via ${scorer.backend}` : "disabled (no ANTHROPIC_API_KEY or claude CLI)"}`,
+  `bias-mcp ready · provider: ${router.primary}${router.available.length > 1 ? ` (fallback: ${router.available.slice(1).join(", ")})` : ""} · bias: ${scorer ? `${scorer.model} via ${scorer.backend}` : "disabled (set NEON_AI_GATEWAY_BASE_URL and NEON_AI_GATEWAY_TOKEN, OPENROUTER_API_KEY, AI_GATEWAY_API_KEY or ANTHROPIC_API_KEY)"}`,
 );
