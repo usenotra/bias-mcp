@@ -9,6 +9,7 @@ export function normalizeUrl(raw: string): string {
         u.searchParams.delete(key);
       }
     }
+    if (u.pathname.length > 1 && u.pathname.endsWith("/")) u.pathname = u.pathname.replace(/\/+$/, "");
     let out = u.toString();
     if (out.endsWith("/")) out = out.slice(0, -1);
     return out.replace(/^http:/, "https:");

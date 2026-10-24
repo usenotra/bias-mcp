@@ -96,6 +96,25 @@ Set at least one provider key. `ANTHROPIC_API_KEY` is needed for bias scoring. S
 | `research` | `true` | look up the publisher's ownership and funding |
 | `maxCharacters` | — | cut the returned markdown. Bias is still scored on the full page |
 
+## Tests and evals
+
+```bash
+npm test        # unit tests for merging, URL normalization, source filtering and provider fallback
+npm run eval    # bias evals against the real model, needs ANTHROPIC_API_KEY
+```
+
+The evals in `evals/cases` are fictional pages with an expected outcome. Every company, outlet, party and person in them is made up. The SaaS set covers a vendor ranking itself first, an affiliate listicle, a sponsored article, a competitor hit piece, a vendor comparison that is honest about the competitor, an independent benchmark, API docs and a changelog. The political set covers a party-funded outlet, an industry-funded think tank, a union-funded voter guide, a labeled opinion column, a nonpartisan wire report and a statistics release.
+
+Each case checks that `applicable` matches, the score falls in the expected range, at least one expected bias type appears, high scores come with sources, every source points to the page or a research result, and the reason is not empty.
+
+```bash
+npm run eval -- --runs 3              # run every case three times to measure stability
+npm run eval -- --filter political    # only cases whose id contains "political"
+npm run eval -- --threshold 0.9       # exit 1 when fewer than 90% of runs pass
+```
+
+Results are written to `evals/results/<timestamp>.json`.
+
 ## Layout
 
 ```
@@ -105,4 +124,6 @@ src/
   providers/          exa, firecrawl, context.dev adapters + router (merge / fallback)
   bias/               scorer (Claude structured output) + publisher research
   types/ schemas/ constants/ utils/
+evals/                fictional SaaS and political cases, checks and the runner
+test/                 unit tests
 ```

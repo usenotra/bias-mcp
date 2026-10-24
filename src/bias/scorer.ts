@@ -4,9 +4,8 @@ import { BIAS_SYSTEM_PROMPT, SEARCH_BIAS_SYSTEM_PROMPT } from "../constants/bias
 import { PageBiasAssessmentSchema, SearchBiasAssessmentSchema } from "../schemas/bias.js";
 import type { Bias, BiasConfig, SearchResultBias } from "../types/bias.js";
 import type { FetchedPage, MergedSearchHit, SearchHit } from "../types/provider.js";
-import { biasLevel, clampScore } from "../utils/bias.js";
+import { biasLevel, clampScore, filterSources } from "../utils/bias.js";
 import { errorMessage } from "../utils/error.js";
-import { normalizeUrl } from "../utils/url.js";
 
 export class BiasScorer {
   private readonly client: Anthropic;
@@ -48,9 +47,7 @@ export class BiasScorer {
       const out = response.parsed_output;
       if (!out) throw new Error(`bias model returned no parseable output (stop_reason: ${response.stop_reason})`);
 
-      // Keep only sources that actually appear in the materials we gave the model.
-      const allowed = new Set([page.url, ...research.map((r) => r.url)].map(normalizeUrl));
-      const sources = out.sources.filter((s) => allowed.has(normalizeUrl(s.url)));
+      const sources = filterSources(out.sources, [page.url, ...research.map((r) => r.url)]);
       const score = clampScore(out.score, out.applicable);
 
       return {
