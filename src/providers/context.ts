@@ -24,7 +24,7 @@ export function createContextProvider(apiKey: string): Provider {
       });
       if (!res.markdown.success || !res.markdown.data) {
         throw new Error(
-          `context.dev could not fetch ${url}: ${res.markdown.error_code ?? ""} ${res.markdown.message ?? ""}`.trim(),
+          `Context.dev could not fetch ${url}: ${res.markdown.error_code ?? ""} ${res.markdown.message ?? ""}`.trim(),
         );
       }
       return {

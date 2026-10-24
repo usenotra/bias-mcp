@@ -1,7 +1,7 @@
 {
   "name": "@usenotra/bias-mcp",
   "version": "0.1.0",
-  "description": "One MCP interface over Exa, Firecrawl and context.dev web search + fetch, with LLM bias scoring",
+  "description": "One MCP interface over Exa, Firecrawl and Context.dev web search + fetch, with LLM bias scoring",
   "main": "dist/index.js",
   "scripts": {
     "build": "tsc",
