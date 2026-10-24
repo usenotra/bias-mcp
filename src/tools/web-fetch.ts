@@ -1,5 +1,6 @@
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { researchPublisher } from "../bias/research.js";
+import { profileSite } from "../bias/site-profile.js";
 import type { BiasScorer } from "../bias/scorer.js";
 import type { ProviderRouter } from "../providers/router.js";
 import { webFetchInput } from "../schemas/tools.js";
@@ -25,8 +26,10 @@ export function registerWebFetch(server: McpServer, router: ProviderRouter, scor
         if (!scorer) {
           biasResult = { error: "Bias scoring needs ANTHROPIC_API_KEY or the claude CLI. Set bias=false to silence this." };
         } else {
-          const evidence = research ? await researchPublisher(router, hostnameOf(page.url)) : [];
-          biasResult = await scorer.scorePage(page, evidence, intent);
+          const [evidence, site] = research
+            ? await Promise.all([researchPublisher(router, hostnameOf(page.url)), profileSite(router, page)])
+            : [[], null];
+          biasResult = await scorer.scorePage(page, evidence, intent, site);
         }
       }
 

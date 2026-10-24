@@ -1,6 +1,7 @@
 import type { z } from "zod";
 import type { BIAS_LEVELS, BIAS_TYPES } from "../constants/bias.js";
 import type {
+  SiteAssessmentSchema,
   BiasSourceSchema,
   PageBiasAssessmentSchema,
   SearchBiasAssessmentSchema,
@@ -11,6 +12,14 @@ export type BiasLevel = (typeof BIAS_LEVELS)[number]["level"];
 export type BiasSource = z.infer<typeof BiasSourceSchema>;
 export type PageBiasAssessment = z.infer<typeof PageBiasAssessmentSchema>;
 export type SearchBiasAssessment = z.infer<typeof SearchBiasAssessmentSchema>;
+export type SiteAssessment = z.infer<typeof SiteAssessmentSchema>;
+
+export interface Satellite {
+  favors: string | null;
+  evidence: string;
+  sources: string[];
+  penalty: number;
+}
 
 /** The `bias` object attached to a fetched page. */
 export interface Bias {
@@ -28,6 +37,7 @@ export interface Bias {
   truncated: boolean;
   /** Whether a web search on the publisher's ownership/funding was used as evidence. */
   researched: boolean;
+  satellite: Satellite | null;
   error?: string;
 }
 

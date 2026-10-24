@@ -33,7 +33,7 @@ export const webFetchInput = {
   research: z
     .boolean()
     .default(true)
-    .describe("Search for the publisher's owner/funding as extra bias evidence (one extra search, cached per domain)."),
+    .describe("Look up the publisher's owner and funding, and profile the site (homepage, other pages, about page) to catch article-only sites that promote one company. Costs one search and up to two fetches per new domain, cached."),
   maxCharacters: z
     .number()
     .int()

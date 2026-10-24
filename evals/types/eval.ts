@@ -1,13 +1,15 @@
 import type { Bias, BiasType } from "../../src/types/bias.js";
 import type { FetchedPage, SearchHit } from "../../src/types/provider.js";
+import type { SiteProfile } from "../../src/types/site.js";
 
-export type EvalCategory = "saas" | "political" | "reference";
+export type EvalCategory = "saas" | "political" | "reference" | "satellite";
 
 export interface EvalExpectation {
   applicable: boolean | "either";
   minScore?: number;
   maxScore?: number;
   anyTypes?: BiasType[];
+  noTypes?: BiasType[];
 }
 
 export interface EvalCase {
@@ -17,6 +19,7 @@ export interface EvalCase {
   intent?: string;
   page: FetchedPage;
   research: SearchHit[];
+  site?: SiteProfile;
   expect: EvalExpectation;
 }
 

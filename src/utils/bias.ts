@@ -1,4 +1,4 @@
-import { BIAS_LEVELS } from "../constants/bias.js";
+import { BIAS_LEVELS, SATELLITE_PENALTY } from "../constants/bias.js";
 import type { BiasLevel } from "../types/bias.js";
 import { normalizeUrl } from "./url.js";
 
@@ -15,4 +15,9 @@ export function biasLevel(score: number | null): BiasLevel | null {
 export function filterSources<T extends { url: string }>(sources: T[], allowedUrls: string[]): T[] {
   const allowed = new Set(allowedUrls.map(normalizeUrl));
   return sources.filter((s) => allowed.has(normalizeUrl(s.url)));
+}
+
+export function applySatellitePenalty(score: number | null, detected: boolean): number | null {
+  if (score === null || !detected) return score;
+  return Math.round(Math.min(1, score + SATELLITE_PENALTY) * 100) / 100;
 }

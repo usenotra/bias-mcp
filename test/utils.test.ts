@@ -51,3 +51,24 @@ test("mergeSearchResults dedupes URLs and ranks agreement first", () => {
   assert.deepEqual(merged[0].providers, ["exa", "context"]);
   assert.equal(merged[0].snippet, "longer snippet");
 });
+
+test("applySatellitePenalty adds 0.2 only when detected and caps at 1", async () => {
+  const { applySatellitePenalty } = await import("../src/utils/bias.js");
+  assert.equal(applySatellitePenalty(0.3, true), 0.5);
+  assert.equal(applySatellitePenalty(0.9, true), 1);
+  assert.equal(applySatellitePenalty(0.3, false), 0.3);
+  assert.equal(applySatellitePenalty(null, true), null);
+});
+
+test("site helpers measure editorial share and product pages", async () => {
+  const { editorialShare, productPages, isAboutPage } = await import("../src/utils/site.js");
+  const pages = [
+    { url: "https://a.example/alternatives/x", title: "", snippet: "" },
+    { url: "https://a.example/compare", title: "", snippet: "" },
+    { url: "https://a.example/pricing", title: "", snippet: "" },
+    { url: "https://a.example/about", title: "", snippet: "" },
+  ];
+  assert.equal(editorialShare(pages), 0.5);
+  assert.deepEqual(productPages(pages), ["https://a.example/pricing"]);
+  assert.equal(isAboutPage("https://a.example/about-us"), true);
+});

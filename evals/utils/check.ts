@@ -44,6 +44,15 @@ export function checkCase(testCase: EvalCase, bias: Bias): EvalCheck[] {
     });
   }
 
+  if (expect.noTypes?.length) {
+    const unexpected = bias.types.filter((t) => expect.noTypes!.includes(t));
+    checks.push({
+      name: "no types",
+      pass: unexpected.length === 0,
+      detail: unexpected.length ? `unexpected [${unexpected.join(", ")}]` : "ok",
+    });
+  }
+
   if (bias.applicable && (bias.score ?? 0) >= 0.5) {
     checks.push({
       name: "has sources",

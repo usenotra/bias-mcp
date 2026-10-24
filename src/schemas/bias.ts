@@ -18,6 +18,13 @@ export const PageBiasAssessmentSchema = z.object({
   sources: z.array(BiasSourceSchema),
 });
 
+export const SiteAssessmentSchema = z.object({
+  satellite: z.boolean().describe("true when the whole site looks like an article-only front for one company"),
+  favors: z.string().nullable().describe("The company the site appears to promote"),
+  evidence: z.string().describe("What in the profile shows it, quoted where possible"),
+  sources: z.array(z.string()).describe("URLs from the site profile that support the evidence"),
+});
+
 /** Batched, snippet-level pre-screen for search results. */
 export const SearchBiasAssessmentSchema = z.object({
   results: z.array(

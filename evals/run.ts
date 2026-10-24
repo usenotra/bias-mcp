@@ -5,6 +5,7 @@ import { createBiasLlm } from "../src/bias/llm-factory.js";
 import { DEFAULT_BIAS_MAX_CHARS } from "../src/constants/bias.js";
 import { POLITICAL_CASES } from "./cases/political.js";
 import { SAAS_CASES } from "./cases/saas.js";
+import { SATELLITE_CASES } from "./cases/satellite.js";
 import type { EvalCase, EvalRun } from "./types/eval.js";
 import { checkCase } from "./utils/check.js";
 
@@ -26,7 +27,7 @@ if (!llm) {
 const runs = Number(values.runs);
 const concurrency = Number(values.concurrency);
 const threshold = Number(values.threshold);
-const cases = [...SAAS_CASES, ...POLITICAL_CASES].filter((c) => !values.filter || c.id.includes(values.filter));
+const cases = [...SAAS_CASES, ...POLITICAL_CASES, ...SATELLITE_CASES].filter((c) => !values.filter || c.id.includes(values.filter));
 const scorer = new BiasScorer(llm, { maxChars: Number(process.env.BIAS_MAX_CHARS) || DEFAULT_BIAS_MAX_CHARS });
 
 const jobs: { testCase: EvalCase; run: number }[] = cases.flatMap((testCase) =>
@@ -35,7 +36,7 @@ const jobs: { testCase: EvalCase; run: number }[] = cases.flatMap((testCase) =>
 
 async function execute({ testCase, run }: { testCase: EvalCase; run: number }): Promise<EvalRun> {
   const started = Date.now();
-  const bias = await scorer.scorePage(testCase.page, testCase.research, testCase.intent);
+  const bias = await scorer.scorePage(testCase.page, testCase.research, testCase.intent, testCase.site);
   const checks = checkCase(testCase, bias);
   return {
     id: testCase.id,

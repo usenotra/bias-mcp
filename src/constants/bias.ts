@@ -11,6 +11,7 @@ export const BIAS_TYPES = [
   "political", // partisan framing or party-aligned publisher
   "funding", // owner/funder has a stake in the topic
   "ideological",
+  "satellite_site",
   "other",
 ] as const;
 
@@ -24,6 +25,18 @@ export const BIAS_LEVELS = [
 
 /** How many publisher-research search hits to give the model as context. */
 export const RESEARCH_RESULTS = 5;
+
+export const SATELLITE_PENALTY = 0.2;
+
+export const SITE_SAMPLE_RESULTS = 15;
+
+export const SITE_HOMEPAGE_CHARS = 12_000;
+
+export const SITE_ABOUT_CHARS = 4_000;
+
+export const EDITORIAL_PATH_PATTERN = /\/(blog|articles?|posts?|compare|comparisons?|vs|versus|alternatives?|best|top|reviews?|guides?|for)(\/|$|-)/i;
+
+export const PRODUCT_PATH_PATTERN = /\/(pricing|plans|signup|sign-up|register|login|log-in|signin|app|dashboard|docs|documentation|api|features|product|integrations|download|checkout|cart|shop)(\/|$)/i;
 
 export const BIAS_SYSTEM_PROMPT = `You assess whether a web page is a biased source for the reader's purpose.
 
@@ -50,3 +63,16 @@ export const BIAS_BACKENDS = ["anthropic", "claude-cli"] as const;
 export const DEFAULT_CLAUDE_CLI_MODEL = "haiku";
 
 export const CLAUDE_CLI_TIMEOUT_MS = 180_000;
+
+export const SITE_SYSTEM_PROMPT = `You decide whether a website is a satellite site: a site that exists to host articles and quietly promotes one company.
+
+You get a profile of the site with its homepage, a sample of its other pages, its about page when one exists, the share of sampled pages that are editorial (comparisons, alternatives, best-of lists, guides, blog posts) and how many product pages (pricing, signup, login, docs) were found.
+
+Set satellite=true only when all of these hold:
+- The site exists to host articles and has no product or service of its own.
+- The owner is not clearly named, or the author is anonymous or a pen name.
+- One company keeps getting favored across the site, for example listed first in most shortlists, mentioned most often, given claims no competitor gets, or named as the default pick.
+
+Name that one company in favors. If two companies trade the top spot, pick the one the homepage favors most. Quote the evidence and cite only URLs from the profile.
+
+Do not flag review sites that cover many vendors evenly, publishers that name their owner, personal blogs by a named author, or a vendor's own blog on its product domain.`;
