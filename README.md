@@ -59,7 +59,7 @@ The verdict is cached per domain, so every page on the site gets the same answer
 ## Setup
 
 ```bash
-npm install && npm run build
+pnpm install && pnpm build
 ```
 
 Set one provider key. With more than one, the first in the order Firecrawl, context.dev, Exa does the work and the others are fallbacks. Bias scoring needs one model gateway. The server checks for these in order and uses the first one that is fully set:
@@ -129,7 +129,7 @@ See `.env.example`.
 ## Evals
 
 ```bash
-npm run eval    # bias evals against the real model, needs a model gateway from the list above
+pnpm eval    # bias evals against the real model, needs a model gateway from the list above
 ```
 
 The evals in `evals/cases` are fictional pages with an expected outcome. Every company, outlet, party and person in them is made up. The SaaS set covers a vendor ranking itself first, an affiliate listicle, a sponsored article, a competitor hit piece, a vendor comparison that is honest about the competitor, an independent benchmark, API docs and a changelog. The satellite set covers two pages from an article-only site that favors one company (one of them never mentions it) and three look-alikes that must not be flagged: a review site with a named owner, a vendor's own blog and a personal engineering blog. The political set covers a party-funded outlet, an industry-funded think tank, a union-funded voter guide, a labeled opinion column, a nonpartisan wire report and a statistics release.
@@ -137,12 +137,12 @@ The evals in `evals/cases` are fictional pages with an expected outcome. Every c
 Each case checks that `applicable` matches, the score falls in the expected range, at least one expected bias type appears, high scores come with sources, every source points to the page or a research result, and the reason is not empty.
 
 ```bash
-npm run eval -- --runs 3              # run every case three times to measure stability
-npm run eval -- --filter political    # only cases whose id contains "political"
-npm run eval -- --threshold 0.9       # exit 1 when fewer than 90% of runs pass
+pnpm eval --runs 3              # run every case three times to measure stability
+pnpm eval --filter political    # only cases whose id contains "political"
+pnpm eval --threshold 0.9       # exit 1 when fewer than 90% of runs pass
 ```
 
-Results are written to `evals/results/<timestamp>.json`. `npm run eval` reads `.env` when it exists.
+Results are written to `evals/results/<timestamp>.json`. `pnpm eval` reads `.env` when it exists.
 
 The last run on Claude Haiku 5.5 through the `claude` CLI passed 38 of 38 runs (19 cases, two runs each).
 
