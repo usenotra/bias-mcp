@@ -30,5 +30,5 @@ registerWebFetch(server, router, scorer);
 
 await server.connect(new StdioServerTransport());
 console.error(
-  `web-mcp ready · providers: ${router.available.join(", ")} · bias: ${scorer ? `${scorer.model} via ${scorer.backend}` : "disabled (no ANTHROPIC_API_KEY or claude CLI)"}`,
+  `web-mcp ready · provider: ${router.primary}${router.available.length > 1 ? ` (fallback: ${router.available.slice(1).join(", ")})` : ""} · bias: ${scorer ? `${scorer.model} via ${scorer.backend}` : "disabled (no ANTHROPIC_API_KEY or claude CLI)"}`,
 );

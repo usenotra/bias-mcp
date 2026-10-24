@@ -11,7 +11,7 @@ const cache = new Map<string, Promise<SearchHit[]>>();
 export function researchPublisher(router: ProviderRouter, hostname: string): Promise<SearchHit[]> {
   let pending = cache.get(hostname);
   if (!pending) {
-    const provider = router.available[0];
+    const provider = router.primary;
     pending = router
       .search(
         {

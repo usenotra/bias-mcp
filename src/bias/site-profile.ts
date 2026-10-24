@@ -13,7 +13,7 @@ async function build(router: ProviderRouter, page: FetchedPage, hostname: string
 
   const [sample, home] = await Promise.all([
     router
-      .search({ query: `site:${hostname}`, numResults: SITE_SAMPLE_RESULTS }, [router.available[0]])
+      .search({ query: `site:${hostname}`, numResults: SITE_SAMPLE_RESULTS }, [router.primary])
       .then((r) => r.results.filter((h) => hostnameOf(h.url) === hostname))
       .catch(() => []),
     isHome ? Promise.resolve(page) : router.fetch(origin, "auto").then((r) => r.page).catch(() => null),

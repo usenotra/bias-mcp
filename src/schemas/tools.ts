@@ -7,7 +7,7 @@ export const webSearchInput = {
   providers: z
     .array(z.enum(PROVIDER_IDS))
     .optional()
-    .describe("Providers to query in parallel; results are merged and deduped. Defaults to all configured."),
+    .describe("Defaults to one provider, the first configured of firecrawl, context, exa. Name one to force it, or several to query them in parallel and merge the results."),
   includeDomains: z.array(z.string()).optional().describe("Only return results from these domains"),
   excludeDomains: z.array(z.string()).optional().describe("Never return results from these domains"),
   bias: z
@@ -21,7 +21,7 @@ export const webFetchInput = {
   provider: z
     .enum(["auto", ...PROVIDER_IDS])
     .default("auto")
-    .describe('Provider to use. "auto" tries firecrawl → context → exa until one succeeds.'),
+    .describe('Provider to use. "auto" uses the first configured of firecrawl, context, exa and falls back to the next on failure.'),
   bias: z
     .boolean()
     .default(true)

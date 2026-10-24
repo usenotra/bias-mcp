@@ -2,8 +2,8 @@
 
 One MCP server for web search and web fetch on top of **Exa**, **Firecrawl** and **context.dev**. Every fetched page also gets a **bias score**.
 
-- **`web_search`** queries every configured provider in parallel, removes duplicate URLs, and ranks results with reciprocal rank fusion, so URLs that several providers return rank higher. Each result lists the providers that found it. If one provider fails, the others still return results, and the failure appears in `providerErrors`.
-- **`web_fetch`** turns any URL into clean markdown. It tries `firecrawl → context → exa` until one works, or you can pick a provider. **It adds a `bias` object by default**; pass `bias: false` to turn that off.
+- **`web_search`** uses one provider, picked from the keys you set in the order Firecrawl, context.dev, Exa. It moves to the next configured provider only when a call fails, and reports the failure in `providerErrors`. Pass several providers in `providers` to query them in parallel, remove duplicate URLs and rank the merged list with reciprocal rank fusion.
+- **`web_fetch`** turns any URL into clean markdown with the same provider order and fallback, or a provider you name. **It adds a `bias` object by default**; pass `bias: false` to turn that off.
 
 ## The bias score
 
@@ -62,7 +62,7 @@ The verdict is cached per domain, so every page on the site gets the same answer
 npm install && npm run build
 ```
 
-Set at least one provider key. `ANTHROPIC_API_KEY` is needed for bias scoring. See `.env.example`.
+Set one provider key. With more than one, the first in the order Firecrawl, context.dev, Exa does the work and the others are fallbacks. `ANTHROPIC_API_KEY` is needed for bias scoring. See `.env.example`.
 
 | Env var | Purpose |
 |---|---|
@@ -100,7 +100,7 @@ Set at least one provider key. `ANTHROPIC_API_KEY` is needed for bias scoring. S
 |---|---|---|
 | `query` | — | search query |
 | `numResults` | 10 | max results after merging |
-| `providers` | all configured | e.g. `["exa", "context"]` |
+| `providers` | first configured | one to force it, several to merge, e.g. `["exa", "context"]` |
 | `includeDomains` / `excludeDomains` | — | domain filters |
 | `bias` | `false` | screen each result's snippet for bias |
 

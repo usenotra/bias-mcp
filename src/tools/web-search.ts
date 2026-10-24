@@ -10,7 +10,7 @@ export function registerWebSearch(server: McpServer, router: ProviderRouter, sco
     "web_search",
     {
       title: "Web search",
-      description: `Search the web across ${router.available.join(", ")} in parallel. Results are deduped and ranked by agreement between providers (reciprocal rank fusion); each result lists which providers found it. Optional snippet-level bias pre-screen.`,
+      description: `Search the web with ${router.primary}${router.available.length > 1 ? `, falling back to ${router.available.slice(1).join(", ")} if it fails` : ""}. Pass several providers to query them together and merge the results. Optional snippet-level bias pre-screen.`,
       inputSchema: webSearchInput,
       annotations: { readOnlyHint: true, openWorldHint: true },
     },

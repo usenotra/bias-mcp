@@ -15,8 +15,7 @@ export const PROVIDER_BASE_URLS: Record<ProviderId, string> = {
   context: "https://api.context.dev/v1",
 };
 
-/** Order tried by `web_fetch` with provider "auto" (first success wins). */
-export const DEFAULT_FETCH_ORDER: ProviderId[] = ["firecrawl", "context", "exa"];
+export const PROVIDER_PRIORITY: ProviderId[] = ["firecrawl", "context", "exa"];
 
 export const REQUEST_TIMEOUT_MS = 60_000;
 
