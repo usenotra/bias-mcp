@@ -72,3 +72,15 @@ test("site helpers measure editorial share and product pages", async () => {
   assert.deepEqual(productPages(pages), ["https://a.example/pricing"]);
   assert.equal(isAboutPage("https://a.example/about-us"), true);
 });
+
+test("scores never go above 1 or below 0", async () => {
+  const { applySatellitePenalty } = await import("../src/utils/bias.js");
+  for (const raw of [0.85, 0.95, 1, 1.4, 7, Number.POSITIVE_INFINITY]) {
+    const score = applySatellitePenalty(clampScore(raw, true), true);
+    assert.ok(score !== null && score <= 1 && score >= 0, `${raw} became ${score}`);
+  }
+  assert.equal(applySatellitePenalty(clampScore(0.95, true), true), 1);
+  assert.equal(applySatellitePenalty(clampScore(1.4, true), true), 1);
+  assert.equal(clampScore(Number.NEGATIVE_INFINITY, true), 0);
+  assert.equal(biasLevel(1), "very_high");
+});

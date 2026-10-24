@@ -19,5 +19,5 @@ export function filterSources<T extends { url: string }>(sources: T[], allowedUr
 
 export function applySatellitePenalty(score: number | null, detected: boolean): number | null {
   if (score === null || !detected) return score;
-  return Math.round(Math.min(1, score + SATELLITE_PENALTY) * 100) / 100;
+  return clampScore(score + SATELLITE_PENALTY, true);
 }
