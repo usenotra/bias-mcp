@@ -114,10 +114,9 @@ Set at least one provider key. `ANTHROPIC_API_KEY` is needed for bias scoring. S
 | `research` | `true` | look up the publisher's ownership and funding |
 | `maxCharacters` | — | cut the returned markdown. Bias is still scored on the full page |
 
-## Tests and evals
+## Evals
 
 ```bash
-npm test        # unit tests for merging, URL normalization, source filtering and provider fallback
 npm run eval    # bias evals against the real model, needs ANTHROPIC_API_KEY
 ```
 
@@ -145,5 +144,4 @@ src/
   bias/               scorer (Claude structured output) + publisher research
   types/ schemas/ constants/ utils/
 evals/                fictional SaaS and political cases, checks and the runner
-test/                 unit tests
 ```

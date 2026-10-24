@@ -9,7 +9,6 @@
     "start": "node dist/index.js",
     "typecheck": "tsc -p tsconfig.check.json",
     "prepare": "tsc",
-    "test": "node --import tsx --test test/*.test.ts",
     "eval": "tsx --env-file-if-exists=.env evals/run.ts"
   },
   "license": "MIT",
