@@ -1,8 +1,8 @@
 # bias-mcp
 
-One MCP server for web search and web fetch on top of **Exa**, **Firecrawl** and **Context.dev**. Every fetched page also gets a **bias score**.
+One MCP server for web search and web fetch on top of **Context.dev**, **Firecrawl** and **Exa**. Every fetched page also gets a **bias score**.
 
-- **`web_search`** uses one provider, picked from the keys you set in the order Firecrawl, Context.dev, Exa. It moves to the next configured provider only when a call fails, and reports the failure in `providerErrors`. Pass several providers in `providers` to query them in parallel, remove duplicate URLs and rank the merged list with reciprocal rank fusion.
+- **`web_search`** uses one provider, picked from the keys you set in the order Context.dev, Firecrawl, Exa. It moves to the next configured provider only when a call fails, and reports the failure in `providerErrors`. Pass several providers in `providers` to query them in parallel, remove duplicate URLs and rank the merged list with reciprocal rank fusion.
 - **`web_fetch`** turns any URL into clean markdown with the same provider order and fallback, or a provider you name. **It adds a `bias` object by default**; pass `bias: false` to turn that off.
 
 ## The bias score
@@ -62,7 +62,7 @@ The verdict is cached per domain, so every page on the site gets the same answer
 pnpm install && pnpm build
 ```
 
-Set one provider key. With more than one, the first in the order Firecrawl, Context.dev, Exa does the work and the others are fallbacks. Bias scoring needs one model gateway. The server checks for these in order and uses the first one that is fully set:
+Set one provider key. With more than one, the first in the order Context.dev, Firecrawl, Exa does the work and the others are fallbacks. Bias scoring needs one model gateway. The server checks for these in order and uses the first one that is fully set:
 
 1. **Neon AI Gateway:** `NEON_AI_GATEWAY_BASE_URL` and `NEON_AI_GATEWAY_TOKEN`. Both are required, and `neon env pull` writes them for you.
 2. **OpenRouter:** `OPENROUTER_API_KEY`.
@@ -74,9 +74,9 @@ See `.env.example`.
 
 | Env var | Purpose |
 |---|---|
-| `EXA_API_KEY` | Enables Exa |
-| `FIRECRAWL_API_KEY` | Enables Firecrawl |
 | `CONTEXT_DEV_API_KEY` or `CONTEXT_API_KEY` | Enables Context.dev |
+| `FIRECRAWL_API_KEY` | Enables Firecrawl |
+| `EXA_API_KEY` | Enables Exa |
 | `NEON_AI_GATEWAY_BASE_URL` + `NEON_AI_GATEWAY_TOKEN` | Bias scoring through the Neon AI Gateway (first choice) |
 | `OPENROUTER_API_KEY` | Bias scoring through OpenRouter |
 | `AI_GATEWAY_API_KEY` | Bias scoring through the Vercel AI Gateway |
@@ -94,9 +94,9 @@ See `.env.example`.
       "command": "node",
       "args": ["/path/to/bias-mcp/dist/index.js"],
       "env": {
-        "EXA_API_KEY": "…",
-        "FIRECRAWL_API_KEY": "…",
         "CONTEXT_DEV_API_KEY": "…",
+        "FIRECRAWL_API_KEY": "…",
+        "EXA_API_KEY": "…",
         "NEON_AI_GATEWAY_BASE_URL": "…",
         "NEON_AI_GATEWAY_TOKEN": "…"
       }
@@ -120,7 +120,7 @@ See `.env.example`.
 | Param | Default | |
 |---|---|---|
 | `url` | — | page to fetch |
-| `provider` | `auto` | `auto` \| `firecrawl` \| `context` \| `exa` |
+| `provider` | `auto` | `auto` \| `context` \| `firecrawl` \| `exa` |
 | `bias` | **`true`** | attach the `bias` object |
 | `intent` | — | what the reader is deciding, e.g. "pick a payments provider" |
 | `research` | `true` | look up the publisher's ownership and funding |
@@ -152,7 +152,7 @@ The last run on Claude Haiku 5.5 through the `claude` CLI passed 38 of 38 runs (
 src/
   index.ts            stdio entry
   tools/              web_search, web_fetch
-  providers/          exa, firecrawl, Context.dev adapters + router (merge / fallback)
+  providers/          Context.dev, firecrawl, exa adapters + router (merge / fallback)
   bias/               scorer (Claude structured output) + publisher research
   types/ schemas/ constants/ utils/
 evals/                fictional SaaS and political cases, checks and the runner

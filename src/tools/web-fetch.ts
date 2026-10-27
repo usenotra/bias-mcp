@@ -14,7 +14,7 @@ export function registerWebFetch(server: McpServer, router: ProviderRouter, scor
     {
       title: "Web fetch",
       description:
-        "Fetch a URL as clean markdown via firecrawl / Context.dev / exa (automatic fallback). By default also returns `bias`: {score 0-1, level, types, reason, sources} — e.g. a vendor's 'top 5 tools' list ranking itself #1 scores ~1, docs are marked not applicable. Pass `intent` for a sharper assessment; set bias=false to skip it.",
+        "Fetch a URL as clean markdown via Context.dev / firecrawl / exa (automatic fallback). By default also returns `bias`: {score 0-1, level, types, reason, sources} — e.g. a vendor's 'top 5 tools' list ranking itself #1 scores ~1, docs are marked not applicable. Pass `intent` for a sharper assessment; set bias=false to skip it.",
       inputSchema: webFetchInput,
       annotations: { readOnlyHint: true, openWorldHint: true },
     },
